@@ -1,0 +1,3 @@
+[submodule "vendor/cppack"]
+	path = vendor/cppack
+	url = https://github.com/mikeloomisgg/cppack.git
