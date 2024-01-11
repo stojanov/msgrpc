@@ -1,4 +1,4 @@
-project(base)
+project(core)
 
 
 set(SOURCES
@@ -6,9 +6,9 @@ set(SOURCES
    call_handler_base.cpp
     )
 
-add_library(msgpack_core ${SOURCES})
+add_library(msgrpc_core STATIC ${SOURCES})
 
-target_include_directories(msgpack_core PRIVATE
+target_include_directories(msgrpc_core PRIVATE
     ${CMAKE_SOURCE_DIR}/msgrpc
     ${CMAKE_SOURCE_DIR}/vendor/cppack/msgpack/include/
     ./

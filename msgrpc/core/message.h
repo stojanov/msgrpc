@@ -6,18 +6,12 @@
 
 namespace msgrpc::core::messages {
 
-struct Request 
-{
-    std::string name;
-    call_id id; 
-    std::vector<unsigned char> data;
-};
-
-struct Response
+struct Message 
 {
     std::string name;
     call_id id;
     std::vector<unsigned char> data;
+    bool isRequest;
 };
 
 }

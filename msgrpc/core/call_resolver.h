@@ -19,10 +19,17 @@ public:
         
     }
     
-    // will wait for the call to resolve with a given timeout
-    util::expected<return_type, int> wait_for();
+    // will wait for the call to resolve with a given timeout, will remove 
+    template<typename T, typename F>
+    util::expected<return_type, int> wait_for(std::chrono::duration<T, F> duration)
+    {
+        return m_call_handler->wait_for(m_id, duration);
+    }
     // will give you an imediate result response
-    util::expected<return_type, int> result();
+    util::expected<return_type, int> result()
+    {
+        return m_call_handler->query_result(m_id);
+    }
 private:
     call_id m_id;
     std::shared_ptr<core::call_handler<parameter_type, return_type>> m_call_handler;

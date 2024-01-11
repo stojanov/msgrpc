@@ -13,10 +13,10 @@ class signal
 public:
     void connect(func&& callback)
     {
-        m_funcs.push_back(callback);
+        m_funcs.push_back(std::move(callback));
     }
     
-    void operator()(Args&&... args)
+    void operator()(Args&... args)
     {
         for (const auto& func : m_funcs)
         {

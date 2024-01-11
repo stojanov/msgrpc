@@ -49,20 +49,20 @@ public:
             return -1;
         }
 
-        bool id = _call_handler->send_call(parameter);
-
-        if (!id)
-        {
-            return -1;
-        }
+        std::string id = _call_handler->send_call(parameter);
 
         auto call_resolver = std::make_shared<core::call_resolver<param_type, rtn_type>>(id, _call_handler);
         
         return call_resolver;
     }
 
-    void handle_send_data(std::vector<unsigned char> data);
-    void handle_received_data(std::vector<unsigned char> data);
+    void handle_send_data(std::vector<unsigned char> data)
+    {
+    
+    }
+    
+    void handle_received_data(std::vector<unsigned char> data)
+    {}
 
     std::atomic<call_id> m_id_counter;
     std::shared_ptr<transport> m_transport;
