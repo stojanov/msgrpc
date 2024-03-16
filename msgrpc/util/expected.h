@@ -1,5 +1,7 @@
 #pragma once
 
+#include <type_traits>
+#include <utility>
 #include <variant>
 #include <stdexcept>
 
@@ -9,15 +11,29 @@ template<typename value_type, typename error_type>
 class expected 
 {
 public:
-    expected(value_type& value)
+    template<typename ...Args,
+        typename = std::enable_if_t<std::is_constructible_v<value_type, Args...>>>
+    expected(Args&& ...args)
+        : m_variant(std::in_place_index<0>, std::forward<Args>(args)...)
     {
-        m_variant = value;
+
     }
 
-    expected(error_type& error)
+    expected(const error_type& error)
+        : m_variant(error)
     {
-        m_variant = error;
     }
+
+    expected(error_type&& error)
+        : m_variant(std::move(error))
+    {
+    }
+
+    expected(const expected& other) = default;
+    expected(expected&& other) = default;
+
+    expected& operator=(const expected& other) = default;
+    expected& operator=(expected&& other) = default;
 
     bool has_value()
     {

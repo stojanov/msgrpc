@@ -23,6 +23,14 @@ public:
              func(std::forward<Args>(args)...);
         }
     }
+
+    void operator()(Args&&... args)
+    {
+        for (const auto& func : m_funcs)
+        {
+             func(std::forward<Args>(args)...);
+        }
+    }
 private:
    std::vector<func> m_funcs; 
 };

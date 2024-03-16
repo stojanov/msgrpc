@@ -7,7 +7,7 @@ set(SOURCES
 add_subdirectory(core)
 add_subdirectory(client)
 
-add_executable(msgrpc ${SOURCES})
+add_library(msgrpc ${SOURCES})
 
 target_link_libraries(msgrpc PUBLIC msgrpc_client msgrpc_core)
 

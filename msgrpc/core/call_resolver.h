@@ -1,10 +1,10 @@
 #pragma once
 
-#include <optional>
 #include <chrono>
 #include "core/call_handler.h"
 #include "defines.h"
 #include "util/expected.h"
+#include "common.h"
 
 namespace msgrpc::core {
 // int is just a temporary response for the error type
@@ -25,8 +25,8 @@ public:
     {
         return m_call_handler->wait_for(m_id, duration);
     }
-    // will give you an imediate result response
-    util::expected<return_type, int> result()
+    // will give you an imediate result response, used for polling
+    call_result<return_type> result()
     {
         return m_call_handler->query_result(m_id);
     }

@@ -3,11 +3,7 @@
 #include "message.h"
 #include "defines.h"
 #include "util/signal.h"
-#include "util/expected.h"
-#include <functional>
-#include <iomanip>
 #include <vector>
-
 
 namespace msgrpc::core {
 
@@ -17,7 +13,7 @@ public:
     virtual ~call_handler_base() = default;
     
     bool handle_received_payload(const messages::Message& message); 
-    virtual void call_failed(call_id id) = 0;    
+    virtual void call_failed(call_id id) = 0; 
     util::signal<std::vector<unsigned char>> handle_send_payload; 
 protected:
     // why do we have this function here, it's becase we want to have a call_handler
