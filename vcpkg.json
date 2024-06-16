@@ -1,0 +1,8 @@
+{
+    "name": "msgrpc",
+    "version": "0.0.1",
+    "dependencies": [
+        "asio",
+        "spdlog"
+    ]
+}

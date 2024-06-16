@@ -1,6 +1,5 @@
 project(core)
 
-
 set(SOURCES
    call_handler.cpp 
    call_handler_base.cpp

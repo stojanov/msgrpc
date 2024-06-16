@@ -6,33 +6,45 @@
 
 namespace msgrpc::util
 {
-template<typename ...Args>
-class signal
-{
-    using func = std::function<void(Args...)>;
-public:
-    void connect(func&& callback)
-    {
-        m_funcs.push_back(std::move(callback));
-    }
-    
-    void operator()(Args&... args)
-    {
-        for (const auto& func : m_funcs)
-        {
-             func(std::forward<Args>(args)...);
-        }
-    }
 
-    void operator()(Args&&... args)
+    template<typename T>
+    class single_signal
     {
-        for (const auto& func : m_funcs)
+        using func = std::function<T>;
+    public:
+        ~single_signal()
         {
-             func(std::forward<Args>(args)...);
+            disconnect_slot();
         }
-    }
-private:
-   std::vector<func> m_funcs; 
-};
+
+        void disconnect_slot()
+        {
+            m_func = nullptr;
+        }
+
+        void connect(func&& callback)
+        {
+            m_func = std::move(callback);
+        }
+        
+        auto operator()()
+        {
+            return m_func();
+        }
+
+        template<typename ...Args>
+        auto operator()(Args&... args)
+        {
+            return m_func(std::forward<Args>(args)...);
+        }
+
+        template<typename ...Args>
+        auto operator()(Args&&... args)
+        {
+            return m_func(std::forward<Args>(args)...);
+        }
+    private:
+        func m_func;
+    };
 
 }
