@@ -1,5 +1,6 @@
 {
     "name": "msgrpc",
+    "builtin-baseline": "7977f0a771e64e9811d32aa30d9a247e09c39b2e",
     "version": "0.0.1",
     "dependencies": [
         "asio",
