@@ -31,6 +31,8 @@ namespace msgrpc::client {
         if (ec)
         {
             // send the error here
+            // actually there is no way to send the error expect send a generic error
+            // but we don't know which exact id failed
             return;
         }
 

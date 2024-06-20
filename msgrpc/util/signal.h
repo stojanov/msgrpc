@@ -1,8 +1,7 @@
 #pragma once
 
-#include <type_traits>
-#include <vector>
 #include <functional>
+#include <stdexcept>
 
 namespace msgrpc::util
 {
@@ -35,12 +34,20 @@ namespace msgrpc::util
         template<typename ...Args>
         auto operator()(Args&... args)
         {
+            if (!m_func)
+            {
+                throw std::runtime_error("Invalid function call, not a valid function");
+            }
             return m_func(std::forward<Args>(args)...);
         }
 
         template<typename ...Args>
         auto operator()(Args&&... args)
         {
+            if (!m_func)
+            {
+                throw std::runtime_error("Invalid function call, not a valid function");
+            }
             return m_func(std::forward<Args>(args)...);
         }
     private:

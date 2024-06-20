@@ -40,7 +40,7 @@ namespace msgrpc::core
             // if this fails, some nasty template erros will occur
             // at least it will be on compile time
 
-            call_id id = create_call_id();
+            call_id id = generate_call_id();
 
             auto payload = messages::create_and_pack_request(m_name, id, parameter);
 

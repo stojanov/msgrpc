@@ -52,7 +52,7 @@ namespace msgrpc::client
                         return send_data(std::move(payload));
                     });
 
-            call->create_call_id.connect([this]()
+            call->generate_call_id.connect([this]()
                     {
                         return create_call_id();
                     });

@@ -17,7 +17,7 @@ namespace msgrpc::core {
         virtual bool on_receive_payload(const messages::Message& message) = 0;
 
         util::single_signal<std::optional<error::err>(data_buffer)> send_payload;
-        util::single_signal<call_id()> create_call_id;
+        util::single_signal<call_id()> generate_call_id;
     };
 
 }
