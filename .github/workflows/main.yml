@@ -12,18 +12,21 @@ env:
 
 jobs:
   build-linux:
-    - name: Git checkout
-      uses: actions/checkout@v3
-      with:
-        submodules: 'true'
+    runs-on: ubuntu-latest
 
-    - name: Run vcpkg
-      uses: lukka/run-vcpkg@11.5
-      with:
-        vcpkgJsonIgnores: '["**/vcpkg/**", "**/vendor/**"]'
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: 'true'
 
-    - name: Configure CMake
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      - name: Run vcpkg
+        uses: lukka/run-vcpkg@11.5
+        with:
+          vcpkgJsonIgnores: '["**/vcpkg/**", "**/vendor/**"]'
 
-    - name: Build
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      - name: Configure CMake
+        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+
+      - name: Build
+        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
