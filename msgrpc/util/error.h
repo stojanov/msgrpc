@@ -2,7 +2,6 @@
 
 #include <string>
 #include <cstdint>
-#include <format>
 
 namespace msgrpc::error
 {
