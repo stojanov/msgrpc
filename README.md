@@ -52,11 +52,24 @@ msgrpc::client::client client(transport);
 struct Param
 {
     int a;
+
+    // main entry point for seralizing
+    template<typename T>
+    void pack(T& packer)
+    {
+        packer(a);
+    }
 };
 
 struct Response
 {
     int b;
+
+    template<typename T>
+    void pack(T& packer)
+    {
+        packer(b);
+    }
 }
 
 // you can also attach a external callback which will be invoked if the client/server on 
