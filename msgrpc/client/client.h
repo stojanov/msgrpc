@@ -1,16 +1,15 @@
 #pragma once
 
-#include "core/call_handler_base.h"
-#include "core/call_resolver.h"
-#include "core/defines.h"
-#include "core/call_handler.h"
-#include "transport/transport.h"
+#include <transport/transport.h>
+#include <core/common.h>
+#include <core/call_handler.h>
+#include <core/call_resolver.h>
+#include <core/defines.h>
+#include <util/error.h>
 
 #include <atomic>
 #include <memory>
 #include <unordered_map>
-#include "core/common.h"
-#include "util/error.h"
 
 namespace msgrpc::client
 {
@@ -36,8 +35,8 @@ namespace msgrpc::client
          */
         template<typename param_type, typename rtn_type>
         call_func_resolover<param_type, rtn_type>  register_function_call(const std::string& name,
-                                                                          core::external_call_callback<param_type, rtn_type> server_call = nullptr,
-                                                                          core::listener_callback<rtn_type> listener = nullptr)
+                                                                          external_call_callback<param_type, rtn_type> server_call = nullptr,
+                                                                          listener_callback<rtn_type> listener = nullptr)
         {
             // create the shared_ptr with new so it can be deallocated when ref count goes to zero
             // not also when the weak_ptr goes out of scope
@@ -56,6 +55,7 @@ namespace msgrpc::client
                     {
                         return create_call_id();
                     });
+     
 
             return [call_handler_ptr = std::weak_ptr<core::call_handler<param_type, rtn_type>>(call)]
             (param_type& parameter) -> call_resolver_expected<param_type, rtn_type>

@@ -1,20 +1,21 @@
-#include <bits/types/struct_sched_param.h>
-#include <memory>
-#include "client/client.h"
-#include "client/transport/transport.h"
-#include "core/common.h"
-#include "util/signal.h"
 
-#include <iostream>
+#include <client/client.h>
+#include <transport/transport.h>
+#include "core/common.h"
 
 class tcp_transport: public msgrpc::client::transport
 {
 public:
     void connect();
 
-    std::optional<msgrpc::error::err> send(msgrpc::core::data_buffer& data) override
+    std::optional<msgrpc::error::err> send(msgrpc::data_buffer& data) override
     {
         return {};
+    }
+
+    msgrpc::msg_result<msgrpc::data_buffer> receive(std::chrono::milliseconds timeout) override
+    {
+        return msgrpc::data_buffer();
     }
 };
 
@@ -43,24 +44,11 @@ struct Response
 int main()
 {
     auto transport = std::make_shared<tcp_transport>();
-
-    // transport->connect();
-
-    msgrpc::util::single_signal<void(int)> signal;
-    
-
-    signal.connect([](int a)
-            {
-                std::cout << a << "\n";
-            });
     
     msgrpc::client::client client(transport);
 
     auto AddGame = client.register_function_call<Param, Response>("AddGame", nullptr);
 
-    signal(1);
-
-    std::cout << "Got to here\n";
     Param p{ 1 };
     const auto response = AddGame(p);
 }

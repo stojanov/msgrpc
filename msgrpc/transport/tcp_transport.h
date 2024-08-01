@@ -1,5 +1,5 @@
-#include "core/common.h"
-#include "transport.h"
+#include <core/common.h>
+#include <transport/transport.h>
 
 #include <asio.hpp>
 
@@ -18,7 +18,7 @@ namespace msgrpc::client
         // as to not block the thread calling this
         // void async_send(const std::vector<unsigned char>&& data, const transport::async_send_callback&& callback) override;tcp-tra
 
-        std::optional<error::err> send(core::data_buffer& data) override;
+        std::optional<error::err> send(data_buffer& data) override;
 
         // connect should be called after calling start
         // maybe we should start the thread when constructing
@@ -36,9 +36,6 @@ namespace msgrpc::client
         // thus meaning we can use a single buffer
         std::vector<unsigned char> m_read_buffer;
         
-        std::atomic_bool m_is_running;
-        std::thread m_thread;
-
         asio::io_context m_ctx;
         asio::ip::tcp::socket m_socket;
     };

@@ -1,9 +1,11 @@
 #pragma once
 
-#include "core/common.h"
-#include "message.h"
-#include "defines.h"
-#include "util/signal.h"
+#include <core/common.h>
+#include <core/message.h>
+#include <core/defines.h>
+
+#include <util/signal.h>
+
 #include <optional>
 
 namespace msgrpc::core {

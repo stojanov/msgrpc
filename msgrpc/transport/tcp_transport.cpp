@@ -1,8 +1,9 @@
-#include "tcp_transport.h"
+#include "util/error.h"
+
+#include <transport/tcp_transport.h>
 #include <asio/error_code.hpp>
 #include <asio/read.hpp>
 #include <asio/system_error.hpp>
-#include "util/error.h"
 #include <asio/write.hpp>
 
 // Initial tcp transport, in the future this should be more robust, add packeting, middleware
@@ -12,7 +13,6 @@
 
 namespace msgrpc::client
 {
-
     tcp_transport::tcp_transport()
         :
         m_socket(m_ctx),
@@ -23,7 +23,6 @@ namespace msgrpc::client
 
         start();
     }
-
 
     std::optional<error::err> tcp_transport::send(std::vector<unsigned char>& data)
     {

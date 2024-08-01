@@ -73,6 +73,11 @@ namespace msgrpc::util {
             return has_value();
         }
 
+        value_type& or_default(value_type& def)
+        {
+            return has_value() ? value() : def;
+        }
+
     private:
         std::variant<value_type, error_type> m_variant;
     };

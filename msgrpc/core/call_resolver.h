@@ -1,10 +1,12 @@
 #pragma once
 
+#include <core/call_handler.h>
+#include <core/defines.h>
+#include <core/common.h>
+
+#include <util/expected.h>
+
 #include <chrono>
-#include "core/call_handler.h"
-#include "defines.h"
-#include "util/expected.h"
-#include "common.h"
 
 namespace msgrpc::core {
 
@@ -16,7 +18,6 @@ namespace msgrpc::core {
         :   m_id(id),
             m_call_handler(_call_handler)
         {
-            
         }
         
         // will wait for the call to resolve with a given timeout, will remove 
@@ -25,8 +26,9 @@ namespace msgrpc::core {
         {
             return m_call_handler->wait_for(m_id, duration);
         }
+
         // will give you an imediate result response, used for polling
-        call_result<return_type> result()
+        msg_result<return_type> result()
         {
             return m_call_handler->query_result(m_id);
         }

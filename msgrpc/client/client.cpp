@@ -1,18 +1,13 @@
-#include "client.h"
-#include <system_error>
-#include "core/message.h"
-#include "msgpack/msgpack.hpp"
+#include <client/client.h>
+#include <core/message.h>
 
+#include <system_error>
 
 namespace msgrpc::client {
 
     client::client(std::shared_ptr<transport> _transport)
         :   m_transport(_transport)
     {
-        m_transport->received.connect([this](std::vector<unsigned char> data)
-        {
-            on_received_data(std::move(data));
-        });
     }
 
     std::optional<error::err> client::send_data(std::vector<unsigned char> data)

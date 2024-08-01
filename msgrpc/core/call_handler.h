@@ -1,27 +1,22 @@
 #pragma once
 
-#include <condition_variable>
-#include <csignal>
-#include <locale>
+#include <core/call_handler_base.h>
+#include <core/defines.h>
+#include <core/message.h>
+#include <core/common.h>
 
+#include <util/expected.h>
+#include <util/signal.h>
+#include <util/error.h>
+#include <util/defer.h>
+
+#include <condition_variable>
 #include <mutex>
 #include <string>
-#include <core/call_handler_base.h>
-#include "defines.h"
-#include "util/expected.h"
-#include "util/signal.h"
-#include "message.h"
-
-#include <atomic>
 #include <system_error>
-#include <util/error.h>
-#include <msgpack/msgpack.hpp>
-#include "common.h"
-#include "util/defer.h"
 
 namespace msgrpc::core 
 {
-
     template<typename param_type, typename rtn_type>
     class call_handler: public call_handler_base 
     {
@@ -31,7 +26,6 @@ namespace msgrpc::core
             m_external_call(external_call),
             m_listener(listener)
         {
-
         }
 
         util::expected<call_id, error::err> send_call(param_type& parameter)
@@ -55,7 +49,7 @@ namespace msgrpc::core
         }
 
         template<typename rep, typename period>
-        call_result<rtn_type> wait_for(call_id id, std::chrono::duration<rep, period> duration)
+        msg_result<rtn_type> wait_for(call_id id, std::chrono::duration<rep, period> duration)
         {
             std::unique_lock lck(m_result_mutex);
 
@@ -77,7 +71,7 @@ namespace msgrpc::core
             return m_call_results[id];
         }
 
-        call_result<rtn_type> query_result(call_id id)
+        msg_result<rtn_type> query_result(call_id id)
         {
             std::lock_guard lck(m_result_mutex);
 
@@ -102,6 +96,7 @@ namespace msgrpc::core
         {
             std::lock_guard lck(m_result_mutex);
 
+            // this can possibly be skipped
             if (const auto i = m_call_results.find(id); i != std::end(m_call_results))
             {
                 m_call_results.erase(i);
@@ -111,7 +106,7 @@ namespace msgrpc::core
     private:
         bool on_receive_payload(const messages::Message& message) override 
         {
-            // TODO: Distingush between message, request, response, external_cal = nullpt
+            // TODO: Distingush between message, request, response, external_call = nullpt
             switch (message.type)
             {
                 case messages::Request:
@@ -132,7 +127,7 @@ namespace msgrpc::core
                     // do nothing for now
                     break;
             }
-
+            
             // don't know what to do with this for now
             return true;
         }
@@ -173,13 +168,15 @@ namespace msgrpc::core
         {
             std::error_code ec;
             
-            auto parameter = msgpack::unpack<param_type>(message.data);
+            auto parameter = msgpack::unpack<param_type>(message.data, ec);
 
             if (ec)
             {
                 // TODO: handle the error here
+                // send back the error
                 return;
             }
+
             // try here in case external_call throws
             try 
             {
@@ -194,12 +191,8 @@ namespace msgrpc::core
                 // possible improvement create a class to handle the serialization
                 auto response_serialized = messages::create_and_pack_response(m_name, message.id, result);
 
-                // auto err= handle_send_payload(response_serialized);
+                // send the result/response to the caller
 
-                if (true)
-                {
-                    // handle the error here
-                }
             }
             catch (...)
             {

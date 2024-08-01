@@ -5,7 +5,6 @@
 
 namespace msgrpc::error
 {
-
     enum error_code: std::uint32_t
     {
         cannot_parse_response = 0x5000,

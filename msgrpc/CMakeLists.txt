@@ -1,19 +1,17 @@
-
-
-set(SOURCES 
-    msgrpc.cpp
-)
-
 add_subdirectory(core)
 add_subdirectory(client)
 
-add_library(msgrpc ${SOURCES})
+add_library(msgrpc INTERFACE)
 
-target_link_libraries(msgrpc PUBLIC msgrpc_client msgrpc_core)
+if (BUILD_TRANSPORT)
+    add_subdirectory(transport)
+    target_link_libraries(msgrpc INTERFACE msgrpc_transport)
+endif()
 
-target_include_directories(msgrpc
-    PUBLIC
-        ${CMAKE_SOURCE_DIR}/vendor/cppack/msgpack/include
-        ./
+target_link_libraries(msgrpc INTERFACE msgrpc_client msgrpc_core)
+ 
+target_include_directories(msgrpc 
+    INTERFACE
+    ./
 )
 

@@ -39,8 +39,6 @@ namespace msgrpc::core::messages {
     template<typename T>
     static inline data_buffer create_and_pack_request(const std::string& name, call_id id, T& data_to_pack)
     {
-        data_buffer packed_data = msgpack::pack(data_to_pack);
-
         auto msg = Message {
             .name = name,
             .id = id, 
@@ -54,8 +52,6 @@ namespace msgrpc::core::messages {
     template<typename T>
     static inline data_buffer create_and_pack_response(const std::string& name, call_id id, T& data_to_pack)
     {
-        data_buffer packed_data = msgpack::pack(data_to_pack);
-
         auto msg = Message {
             .name = name,
             .id = id,
@@ -68,8 +64,6 @@ namespace msgrpc::core::messages {
 
     static inline data_buffer create_and_pack_error(const std::string& name, call_id id, error::err& data_to_pack)
     {
-        data_buffer packed_data = msgpack::pack(data_to_pack);
-
         auto msg = Message {
             .name = name,
             .id = id,
