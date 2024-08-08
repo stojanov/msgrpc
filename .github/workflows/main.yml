@@ -21,7 +21,7 @@ jobs:
         submodules: 'true'
         
     - name: print gcc info
-    - run: gcc --version
+      run: gcc --version
     
     - name: Run vcpkg
       uses: lukka/run-vcpkg@v11.5
