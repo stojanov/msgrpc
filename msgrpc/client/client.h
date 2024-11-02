@@ -48,14 +48,14 @@ class client {
                 name, std::move(server_call), std::move(listener)));
 
         // we override if there is already a call handler attach, shouldn't
-        // change muc*h
+        // change much
         m_calls[name] = call;
 
-        call->send_payload.connect([this](std::vector<unsigned char> payload,
-                                          call_id id,
-                                          core::call_handler_base& handler) {
-            return send_data(std::move(payload), id, handler);
-        });
+        /*call->send_payload.connect(*/
+        /*    [this](data_buffer payload, call_id id,*/
+        /*           core::call_handler_base& handler) -> void {*/
+        /*        send_data(payload, id, handler);*/
+        /*    });*/
 
         call->generate_call_id.connect([this]() { return create_call_id(); });
 
@@ -71,9 +71,8 @@ class client {
    private:
     // no need to be coping the vector here
     // TODO: make this get a const ref or maybe a span
-    std::optional<error::err> send_data(std::vector<unsigned char>&& data,
-                                        call_id id,
-                                        core::call_handler_base& handler);
+    void send_data(std::vector<unsigned char> data, call_id id,
+                   core::call_handler_base& handler);
 
     void on_received_data(std::vector<unsigned char> data);
 

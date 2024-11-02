@@ -75,14 +75,13 @@ void async_pool::polling_work() {
                 });
             }
         }
+        auto dt = (clock::now() - t);
+        // this should handle if we have dt bigger then resolution
+        // possibly start another timer thread and stuff
+        // also warn
+        auto should_wait = m_polling_resolution - dt;
+        std::this_thread::sleep_for(should_wait);
     }
-
-    auto dt = (clock::now() - t);
-    // this should handle if we have dt bigger then resolution
-    // possibly start another timer thread and stuff
-    // also warn
-    auto should_wait = m_polling_resolution - dt;
-    std::this_thread::sleep_for(should_wait);
 }
 
 void async_pool::queued_work() {

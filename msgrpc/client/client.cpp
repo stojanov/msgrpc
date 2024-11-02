@@ -9,9 +9,8 @@ namespace msgrpc::client {
 client::client(std::shared_ptr<transport> _transport)
     : m_transport(_transport), m_async_pool(std::chrono::milliseconds(1)) {}
 
-std::optional<error::err> client::send_data(std::vector<unsigned char>&& data,
-                                            call_id id,
-                                            core::call_handler_base& handler) {
+void client::send_data(std::vector<unsigned char> data, call_id id,
+                       core::call_handler_base& handler) {
     m_async_pool.submit([&] {
         auto err = m_transport->send(data);
 
@@ -19,7 +18,6 @@ std::optional<error::err> client::send_data(std::vector<unsigned char>&& data,
             handler.fail_call(id, *err);
         }
     });
-    return std::nullopt;
 }
 
 void client::on_received_data(std::vector<unsigned char> data) {

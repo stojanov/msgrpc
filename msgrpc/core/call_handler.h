@@ -27,9 +27,10 @@ class call_handler : public call_handler_base {
     call_id send_call(param_type& parameter) {
         call_id id = generate_call_id();
 
-        auto payload = messages::create_and_pack_request(m_name, id, parameter);
+        data_buffer payload =
+            messages::create_and_pack_request(m_name, id, parameter);
 
-        send_payload(payload, id, *this);
+        send_payload(payload, id, std::ref(*this));
 
         return id;
     }
@@ -81,10 +82,16 @@ class call_handler : public call_handler_base {
         }
     }
 
+    void fail_call(call_id id, const error::err& err) override {
+        {
+            std::lock_guard lck(m_result_mutex);
+            m_call_results.insert(std::make_pair(id, err));
+        }
+        m_result_signal.notify_all();
+    }
+
    private:
     bool on_receive_payload(const messages::Message& message) override {
-        // TODO: Distingush between message, request, response, external_call =
-        // nullpt
         switch (message.type) {
             case messages::Request: {
                 handle_external_call(message);
@@ -95,6 +102,7 @@ class call_handler : public call_handler_base {
                 break;
             }
             case messages::Error: {
+                // TODO
                 break;
             }
             default:
@@ -104,14 +112,6 @@ class call_handler : public call_handler_base {
 
         // don't know what to do with this for now
         return true;
-    }
-
-    void handle_fail_call(call_id id, const error::err& err) {
-        {
-            std::lock_guard lck(m_result_mutex);
-            m_call_results.insert(std::make_pair(id, err));
-        }
-        m_result_signal.notify_all();
     }
 
     void notify_about_result(call_id id, auto& result) {

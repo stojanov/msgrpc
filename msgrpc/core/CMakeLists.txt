@@ -13,6 +13,7 @@ find_package(fmt CONFIG REQUIRED)
 target_link_libraries(msgrpc_core PRIVATE 
     spdlog::spdlog_header_only
     fmt::fmt-header-only
+    msgrpc_system
 )
 
 target_include_directories(msgrpc_core PRIVATE
