@@ -2,12 +2,25 @@
 #include <core/call_handler_base.h>
 #include <core/message.h>
 
+#include <chrono>
 #include <system_error>
 
 namespace msgrpc::client {
 
 client::client(std::shared_ptr<transport> _transport)
-    : m_transport(_transport), m_async_pool(std::chrono::milliseconds(1)) {}
+    : m_transport(_transport), m_async_pool(std::chrono::milliseconds(1)) {
+    auto job = [&](std::function<void()> signal_end) {
+        auto payload = m_transport->receive(std::chrono::milliseconds(100));
+
+        signal_end();
+
+        if (payload) {
+            // this can take as long as it wants
+            on_received_data(*payload);
+        }
+    };
+    m_async_pool.attach_polling_job(job, std::chrono::milliseconds(0), true);
+}
 
 void client::send_data(std::vector<unsigned char> data, call_id id,
                        core::call_handler_base& handler) {

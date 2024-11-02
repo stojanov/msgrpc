@@ -43,8 +43,9 @@ void async_pool::submit(async_pool::job_func&& job) {
     m_queued_signal.notify_one();
 }
 
-void async_pool::attach_polling_job(async_pool::job_func&& job,
-                                    std::chrono::milliseconds timeout) {
+void async_pool::attach_polling_job(async_pool::polling_job_func&& job,
+                                    std::chrono::milliseconds timeout,
+                                    bool waiting) {
     bool expected = false;
 
     if (m_polling_thread_attached.compare_exchange_strong(expected, true)) {
@@ -53,7 +54,7 @@ void async_pool::attach_polling_job(async_pool::job_func&& job,
 
     {
         std::unique_lock lck(m_polling_mutex);
-        m_polling_jobs.emplace_back(job, timeout);
+        m_polling_jobs.emplace_back(job, timeout, waiting);
     }
 
     m_polling_signal.notify_one();
@@ -65,13 +66,24 @@ void async_pool::polling_work() {
     using clock = std::chrono::high_resolution_clock;
 
     while (m_polling_is_running) {
+        std::unique_lock lck(m_polling_mutex);
+        m_polling_signal.wait(lck, [this] {
+            return !m_polling_jobs.empty() && !m_polling_is_running;
+        });
+
+        if (m_polling_is_running) {
+            return;
+        }
+
         for (auto& job : m_polling_jobs) {
             auto dt = (clock::now() - job.last_started);
 
-            if (dt > job.timeout) {
+            if (dt >= job.timeout && (job.waiting && !job.running->load())) {
                 submit([&] {
+                    job.running->store(true);
                     job.last_started = clock::now();
-                    job.job();
+                    job.job([&]() { job.waiting = false; });
+                    job.running->store(false);
                 });
             }
         }

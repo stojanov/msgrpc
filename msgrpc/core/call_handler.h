@@ -132,7 +132,6 @@ class call_handler : public call_handler_base {
         auto rtn = msgpack::unpack<rtn_type>(message.data, ec);
 
         if (ec) {
-            // error::err err(0, "");
             // auto err = error::err::create(error::cannot_parse_response,
             //         "Invalid response payload, cannot parse response; {}",
             //         ec.message());
